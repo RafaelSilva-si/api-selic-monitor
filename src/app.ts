@@ -3,8 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 
-import { fetchSelicValue } from './services/fetch-selic.service';
-import { sendSelicAlertEmail } from './services/send-email.service';
+import { fetchSelicQueue } from './queues/fetch-selic.queue';
 
 dotenv.config();
 
@@ -13,8 +12,6 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', async (req, res) => {
-  const teste = await fetchSelicValue()
-  console.log(teste)
   res.json({ message: 'API Selic Monitor com TypeScript 🎯' });
 });
 
@@ -26,9 +23,12 @@ app.post('/selic/notify', async (req: Request, res: Response): Promise<any> => {
   }
 
   try {
-    const selic = await fetchSelicValue();
-    await sendSelicAlertEmail(selic, email);
-    res.status(200).json({ success: true, selic });
+    await fetchSelicQueue.add({ email });
+
+    res.status(202).json({
+      success: true,
+      message: 'Processo iniciado: buscando a Selic e enviando o e-mail.',
+    });
   } catch (err: any) {
     console.error(err);
     res.status(500).json({ success: false, error: err.message });
