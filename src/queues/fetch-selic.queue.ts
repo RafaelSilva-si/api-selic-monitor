@@ -7,7 +7,10 @@ interface FetchSelicJob {
 }
 
 export const fetchSelicQueue = new Queue<FetchSelicJob>('fetch-selic', {
-  redis: { host: 'localhost', port: 6379 },
+  redis: { 
+    host: process.env.REDIS_HOST || 'localhost', 
+    port: 6379
+  },
 });
 
 fetchSelicQueue.process(async (job) => {

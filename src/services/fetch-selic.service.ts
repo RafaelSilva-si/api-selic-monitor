@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer';
 export async function fetchSelicValue(): Promise<string> {
   const browser = await puppeteer.launch({
     headless: true,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     args: ['--no-sandbox'], // necessário Para o Docker
   });
 

@@ -7,7 +7,10 @@ interface EmailJob {
 }
 
 export const emailQueue = new Queue<EmailJob>('send-email', {
-  redis: { host: 'localhost', port: 6379 },
+  redis: { 
+    host: process.env.REDIS_HOST || 'localhost', 
+    port: 6379
+  },
 });
 
 emailQueue.process(async (job) => {
